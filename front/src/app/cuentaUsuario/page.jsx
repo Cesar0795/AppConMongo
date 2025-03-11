@@ -10,7 +10,6 @@ export default function CuentaUsuario() {
     const [error, setError] = useState(null);
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const router = useRouter();
 
     useEffect(() => {
@@ -28,20 +27,17 @@ export default function CuentaUsuario() {
                     
                             const obtenerUsuarioPorToken = async () => {
                                 try {
-                                    // Obtener el token desde las cookies usando document.cookie
                                     const token = obtenerCookie("token");
                                     if (!token) {
-                                        router.push("/login"); // Si no hay token, redirigir al login
+                                        router.push("/login");
                                         return;
                                     }
                     
-                                    // Decodificar el token para obtener el id (sin verificar la firma)
                                     const decoded = jwt.decode(token);
                                     if (!decoded || !decoded.id) {
                                         throw new Error("ID no encontrado en el token");
                                     }
                     
-                                    // Llamar directamente a la función para buscar el usuario
                                     const respuesta = await conexionBuscarPorId(decoded.id);
                     
                                     if (!respuesta || !respuesta.data) {
@@ -51,7 +47,6 @@ export default function CuentaUsuario() {
                                     setUsuario(respuesta.data);
                                     setEmail(respuesta.data.email);
                                     setUsername(respuesta.data.username);
-                                    setPassword(""); // Resetear el campo de contraseña
                                 } catch (error) {
                                     console.error("Error al obtener usuario:", error);
                                     setError(error.message);
@@ -72,18 +67,14 @@ export default function CuentaUsuario() {
     const manejarActualizar = async (e) => {
         e.preventDefault();
         try {
-            // Crear el objeto con los datos actualizados
             const datosActualizados = {
                 email,
                 username,
-                password,
             };
 
-            // Llamar a la función para actualizar los datos del usuario
             const respuesta = await actualizarPorId(usuario.id, datosActualizados);
 
             if (respuesta && respuesta.data) {
-                // Redirigir a la página de salir después de la actualización
                 router.push("/salir");
             }
         } catch (error) {
@@ -94,9 +85,7 @@ export default function CuentaUsuario() {
 
     const manejarEliminar = async () => {
         try {
-            // Llamar a la función para eliminar la cuenta del usuario
             await borrarPorId(usuario.id);
-            // Redirigir a la página de salir después de eliminar la cuenta
             router.push("/salir");
         } catch (error) {
             console.error("Error al eliminar usuario:", error);
@@ -175,13 +164,6 @@ export default function CuentaUsuario() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                />
-                <input
-                    style={inputStyle}
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Contraseña"
                 />
                 <button style={buttonStyle} type="submit">
                     Guardar Cambios

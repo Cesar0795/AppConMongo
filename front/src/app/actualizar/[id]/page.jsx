@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { conexionBuscarPorId, actualizarPorId } from "@/conexionApi/peticiones";
 
-export default function EditarUsuario() {
-    const [password, setPassword] = useState("");  
+export default function EditarUsuario() {  
     const [email, setEmail] = useState("");        
     const [tipo, setTipo] = useState("");
     const router = useRouter();
@@ -15,9 +14,8 @@ export default function EditarUsuario() {
             try {
                 const respuesta = await conexionBuscarPorId(id);
                 console.log("Usuario obtenido:", respuesta.data);
-                setEmail(respuesta.data.correo);
+                setEmail(respuesta.data.email);
                 setTipo(respuesta.data.tipo);
-                setPassword(respuesta.data.password);
             } catch (error) {
                 console.error("Error al obtener usuario:", error);
             }
@@ -32,7 +30,6 @@ export default function EditarUsuario() {
             const datosActualizados = { 
                 email, 
                 tipo, 
-                password 
             }; 
             await actualizarPorId(id, datosActualizados);
             router.push("/mostrar"); 
@@ -103,13 +100,6 @@ export default function EditarUsuario() {
                     value={email} 
                     onChange={(e) => setEmail(e.target.value)} 
                     placeholder="Email" 
-                />
-                <input 
-                    style={inputStyle} 
-                    type="password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    placeholder="Contraseña" 
                 />
                 <div style={checkboxContainer}>
                     <label style={{ marginRight: "8px", fontSize: "16px" }}>

@@ -3,14 +3,13 @@
 import { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
 import { useRouter } from "next/navigation";
-import { conexionBuscarPorId, actualizarPorId, borrarPorId } from "@/conexionApi/peticiones";
+import { conexionBuscarPorId, actualizarPorId, borrarPorId, conexionAdministradores } from "@/conexionApi/peticiones";
 
 export default function CuentaUsuario() {
     const [usuario, setUsuario] = useState(null);
     const [error, setError] = useState(null);
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const [tipo, setTipo] = useState("Usuario"); 
     const router = useRouter();
 
@@ -51,7 +50,6 @@ export default function CuentaUsuario() {
                                     setEmail(respuesta.data.email);
                                     setUsername(respuesta.data.username);
                                     setTipo(respuesta.data.tipo || "Usuario");
-                                    setPassword(""); // Resetear contraseña
                                 } catch (error) {
                                     console.error("Error al obtener usuario:", error);
                                     setError(error.message);
@@ -71,7 +69,7 @@ export default function CuentaUsuario() {
     const manejarActualizar = async (e) => {
         e.preventDefault();
         try {
-            const datosActualizados = { email, username, password, tipo };
+            const datosActualizados = { email, username, tipo };
 
             const respuesta = await actualizarPorId(usuario.id, datosActualizados);
 
@@ -171,13 +169,6 @@ export default function CuentaUsuario() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                />
-                <input
-                    style={inputStyle}
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Contraseña"
                 />
                 <div style={checkboxContainer}>
                     <label style={{ marginRight: "8px", fontSize: "16px" }}>
